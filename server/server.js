@@ -53,6 +53,10 @@ app.use('/api', async (req, res, next) => {
   }
 });
 
+app.get('/',(req,res)=>{
+  res.json({ success: true, message: 'Welcome to ProjectDesk API' });
+});
+
 app.use('/api', apiRoutes);
 
 app.use(notFound);
