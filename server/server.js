@@ -58,10 +58,6 @@ app.use('/api', apiRoutes);
 app.use(notFound);
 app.use(errorHandler);
 
-if (!process.env.VERCEL) {
-  connectDB()
-    .then(() => app.listen(PORT, () => console.log(`ProjectDesk server running on port ${PORT}`)))
-    .catch(() => process.exit(1));
-}
-
-export default app;
+connectDB()
+  .then(() => app.listen(PORT, () => console.log(`ProjectDesk server running on port ${PORT}`)))
+  .catch(() => process.exit(1));
