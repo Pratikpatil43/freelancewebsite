@@ -1,9 +1,3 @@
-// Keep this import opaque so Vercel's CommonJS bundler cannot rewrite it to require().
-const dynamicImport = new Function('modulePath', 'return import(modulePath)');
-let appPromise;
+const { default: app } = require('./server.cjs');
 
-module.exports = async (req, res) => {
-  appPromise ||= dynamicImport('../server/server.js').then(({ default: app }) => app);
-  const app = await appPromise;
-  return app(req, res);
-};
+module.exports = app;

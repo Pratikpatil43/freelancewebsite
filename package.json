@@ -9,9 +9,11 @@
   "scripts": {
     "dev": "concurrently \"npm --prefix server run dev\" \"npm --prefix client run dev\"",
     "seed": "npm --prefix server run seed",
-    "build": "npm --prefix client run build"
+    "build:api": "esbuild server/server.js --bundle --platform=node --format=cjs --packages=external --outfile=api/server.cjs",
+    "build": "npm run build:api && npm --prefix client run build"
   },
   "devDependencies": {
-    "concurrently": "^9.1.2"
+    "concurrently": "^9.1.2",
+    "esbuild": "^0.21.5"
   }
 }
