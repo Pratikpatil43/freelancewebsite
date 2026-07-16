@@ -4,8 +4,13 @@ import mongoose from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 
 let memoryMongoServer;
+let connectionPromise;
 
 const connectDB = async () => {
+  if (mongoose.connection.readyState === 1) return mongoose.connection;
+  if (connectionPromise) return connectionPromise;
+
+  connectionPromise = (async () => {
   try {
     const mongoUri = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/projectdesk';
 
@@ -31,9 +36,17 @@ const connectDB = async () => {
       await mongoose.connect(memoryMongoServer.getUri());
       console.log('MongoDB connected successfully via in-memory fallback');
     }
+    return mongoose.connection;
   } catch (error) {
     console.error('MongoDB connection failed:', error.message);
-    process.exit(1);
+    throw error;
+  }
+  })();
+
+  try {
+    return await connectionPromise;
+  } finally {
+    connectionPromise = undefined;
   }
 };
 

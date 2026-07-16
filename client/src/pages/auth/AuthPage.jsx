@@ -46,10 +46,11 @@ export default function AuthPage() {
 
       const container = document.getElementById('google-signin-button');
       if (container) {
+        const buttonWidth = Math.min(400, Math.max(200, Math.floor(container.getBoundingClientRect().width)));
         window.google.accounts.id.renderButton(container, {
           theme: 'outline',
           size: 'large',
-          width: '100%',
+          width: buttonWidth,
           text: 'continue_with',
           shape: 'pill',
         });
