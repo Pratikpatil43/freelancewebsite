@@ -1,9 +1,5 @@
-import fs from 'fs/promises';
-import path from 'path';
 import mongoose from 'mongoose';
-import { MongoMemoryServer } from 'mongodb-memory-server';
 
-let memoryMongoServer;
 let connectionPromise;
 
 const connectDB = async () => {
@@ -11,36 +7,15 @@ const connectDB = async () => {
   if (connectionPromise) return connectionPromise;
 
   connectionPromise = (async () => {
-  try {
-    const mongoUri = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/projectdesk';
-
     try {
-      await mongoose.connect(mongoUri);
+      const mongoUri = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/projectdesk';
+      await mongoose.connect(mongoUri, { serverSelectionTimeoutMS: 10000 });
       console.log('MongoDB connected successfully');
-    } catch (localError) {
-      if (process.env.MONGO_URI) {
-        throw localError;
-      }
-
-      const downloadDir = process.env.MONGOMS_DOWNLOAD_DIR || 'D:\\mongodb-memory-server';
-      const systemBinary = process.env.MONGOMS_SYSTEM_BINARY || path.join(downloadDir, 'mongod-x64-win32-7.0.24.exe');
-
-      await fs.mkdir(downloadDir, { recursive: true });
-      memoryMongoServer = await MongoMemoryServer.create({
-        binary: {
-          downloadDir,
-          systemBinary,
-        },
-      });
-
-      await mongoose.connect(memoryMongoServer.getUri());
-      console.log('MongoDB connected successfully via in-memory fallback');
-    }
     return mongoose.connection;
-  } catch (error) {
-    console.error('MongoDB connection failed:', error.message);
-    throw error;
-  }
+    } catch (error) {
+      console.error('MongoDB connection failed:', error.message);
+      throw error;
+    }
   })();
 
   try {
@@ -49,12 +24,5 @@ const connectDB = async () => {
     connectionPromise = undefined;
   }
 };
-
-process.on('SIGINT', async () => {
-  if (memoryMongoServer) {
-    await memoryMongoServer.stop();
-  }
-  process.exit(0);
-});
 
 export default connectDB;
