@@ -1,0 +1,65 @@
+import mongoose from 'mongoose';
+
+const projectRequestSchema = new mongoose.Schema(
+  {
+    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    requestId: { type: String, required: true, unique: true },
+    studentName: { type: String, required: true },
+    email: { type: String, required: true },
+    phone: { type: String, required: true },
+    collegeName: { type: String, required: true },
+    department: { type: String, required: true },
+    semester: { type: String, required: true },
+    city: { type: String, required: true },
+    projectTitle: { type: String, required: true },
+    projectCategory: { type: String, required: true },
+    projectDescription: { type: String, required: true },
+    package: { type: String, enum: ['Basic', 'Premium'], required: true },
+    amount: { type: Number, enum: [10000, 12000], required: true },
+    existingProjectTopic: { type: String },
+    requiredTechnologies: { type: [String], default: [] },
+    numberOfModules: { type: Number, default: 0 },
+    expectedFeatures: { type: String },
+    projectType: { type: String, enum: ['Mini Project', 'Major Project'], default: 'Mini Project' },
+    projectMode: { type: String, enum: ['Individual', 'Group'], default: 'Individual' },
+    deadline: { type: Date },
+    budgetRange: { type: String },
+    needSourceCode: { type: Boolean, default: false },
+    needDocumentation: { type: Boolean, default: false },
+    needPPT: { type: Boolean, default: false },
+    needSynopsis: { type: Boolean, default: false },
+    needSRS: { type: Boolean, default: false },
+    needDeployment: { type: Boolean, default: false },
+    needHosting: { type: Boolean, default: false },
+    needDemoVideo: { type: Boolean, default: false },
+    needVivaPreparation: { type: Boolean, default: false },
+    needInstallationSupport: { type: Boolean, default: false },
+    attachments: [
+      {
+        fileName: String,
+        url: String,
+        type: String,
+        size: Number,
+      },
+    ],
+    status: {
+      type: String,
+      enum: ['New', 'Under Review', 'More Information Required', 'Confirmed', 'In Development', 'Testing', 'Completed', 'Payment Submitted', 'Paid', 'Delivered', 'Rejected'],
+      default: 'New',
+    },
+    adminNotes: { type: String },
+    progress: { type: Number, min: 0, max: 100, default: 0 },
+    messages: [{ sender: { type: String, enum: ['student', 'admin'] }, text: { type: String, maxlength: 4000 }, createdAt: { type: Date, default: Date.now } }],
+    paymentReference: { type: String, trim: true },
+    paymentScreenshot: { type: Buffer, select: false },
+    paymentScreenshotMime: { type: String, select: false },
+    paymentScreenshotUploaded: { type: Boolean, default: false },
+    deliveryUrl: { type: String, trim: true },
+    demoVideoUrl: { type: String, trim: true },
+    deploymentUrl: { type: String, trim: true },
+  },
+  { timestamps: true }
+);
+
+const ProjectRequest = mongoose.model('ProjectRequest', projectRequestSchema);
+export default ProjectRequest;
