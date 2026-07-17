@@ -26,6 +26,19 @@ body {
   min-height: 100vh;
 }
 
+.app-toast {
+  width: max-content;
+  overflow-wrap: anywhere;
+  font-size: 0.875rem;
+  line-height: 1.35rem;
+}
+
+@media (max-width: 640px) {
+  .app-toast {
+    width: 100%;
+  }
+}
+
 ::selection {
   background: rgba(37, 99, 235, 0.24);
 }

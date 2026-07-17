@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
-import api from '../api/client';
+import api, { clearAuthToken, saveAuthToken } from '../api/client';
 
 const AuthContext = createContext(null);
 
@@ -24,25 +24,32 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (payload) => {
     const { data } = await api.post('/auth/login', payload);
+    saveAuthToken(data.data.token);
     setUser(data.data.user);
     return data;
   };
 
   const register = async (payload) => {
     const { data } = await api.post('/auth/register', payload);
+    saveAuthToken(data.data.token);
     setUser(data.data.user);
     return data;
   };
 
   const googleAuth = async (token) => {
     const { data } = await api.post('/auth/google', { token });
+    saveAuthToken(data.data.token);
     setUser(data.data.user);
     return data;
   };
 
   const logout = async () => {
-    await api.post('/auth/logout');
-    setUser(null);
+    try {
+      await api.post('/auth/logout');
+    } finally {
+      clearAuthToken();
+      setUser(null);
+    }
   };
 
   const value = useMemo(
